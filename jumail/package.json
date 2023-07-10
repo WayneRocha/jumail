@@ -1,0 +1,41 @@
+{
+  "name": "jumail",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@reduxjs/toolkit": "^1.9.5",
+    "@sendinblue/client": "^3.3.1",
+    "@types/node": "20.4.0",
+    "@types/react": "18.2.14",
+    "@types/react-dom": "18.2.6",
+    "aos": "^3.0.0-beta.6",
+    "autoprefixer": "10.4.14",
+    "draft-js": "^0.11.7",
+    "draftjs-to-html": "^0.9.1",
+    "eslint": "8.44.0",
+    "eslint-config-next": "13.4.9",
+    "next": "13.4.9",
+    "postcss": "8.4.25",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "react-draft-wysiwyg": "^1.15.0",
+    "react-markdown": "^8.0.7",
+    "react-redux": "^8.1.1",
+    "redux": "^4.2.1",
+    "redux-thunk": "^2.4.2",
+    "rehype-raw": "^6.1.1",
+    "tailwindcss": "3.3.2",
+    "typescript": "5.1.6"
+  },
+  "devDependencies": {
+    "@types/aos": "^3.0.4",
+    "@types/react-draft-wysiwyg": "^1.13.4",
+    "daisyui": "^3.1.10"
+  }
+}
