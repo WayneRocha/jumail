@@ -296,10 +296,11 @@ function PreviewModal({content}: {content: string}){
         <dialog id="modal_preview" className="modal">
             <form method="dialog" className="modal-box rounded-md">
                 <ReactMarkdown
-                    children={content}
                     rehypePlugins={[rehypeRaw]}
                     className="bg-neutral-50 w-full h-full max-w-md"
-                />
+                >
+                    {content}
+                </ReactMarkdown>
             </form>
             <form method="dialog" className="modal-backdrop">
                 <button>close</button>
