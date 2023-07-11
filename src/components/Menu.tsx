@@ -30,9 +30,6 @@ export default function Menu() {
                     ]
                 }
             ],
-            email: {
-                content: ""
-            },
             variables: [
                 {
                     id: generateUUID(),
@@ -44,7 +41,7 @@ export default function Menu() {
         dispatch(setLists(lists));
     };
 
-    if (lists.length === 0) {
+    if (lists.length === 1) {
         dispatch(setActiveList(lists[0].id));
     }
 

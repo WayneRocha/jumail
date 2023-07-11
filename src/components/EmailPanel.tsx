@@ -1,5 +1,5 @@
-import { List, selectList, setList } from "@/store/features/list-manager";
-import { selectEditorContent, selectUserEmail, setEditorContent } from "@/store/features/ui";
+import { List, selectList, setList, setLists } from "@/store/features/list-manager";
+import { selectEditorContent, selectUserEmail, setActiveList, setEditorContent } from "@/store/features/ui";
 import { replaceVariables } from "@/utils";
 import {useEffect,  useState } from "react";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
@@ -78,6 +78,24 @@ export function EmailPanel(){
         window.modal_preview.showModal();
     }
 
+    const handleDeleteList = () => {
+        if (list === null) { return; }
+
+        let lists: List[] = JSON.parse(window.localStorage.getItem("listManager.lists") || "[]");
+
+        const listIndex = lists.findIndex(l => l.id === list.id);
+
+        lists.splice(listIndex, 1);
+
+        dispatch(setLists(lists));
+
+        if (lists.length > 0) { 
+            dispatch(setActiveList(lists[listIndex - 1].id));
+        } else {
+            dispatch(setActiveList(null));
+        }
+    };
+
     if (list === null) {
         return (<></>);
     }
@@ -85,7 +103,7 @@ export function EmailPanel(){
     return (
         <div className="flex flex-col bg-neutral-50 h-full w-full max-w-full content-between" style={{width: "-webkit-fill-available"}}>
             <Modal />
-            {/* <PreviewModal
+            <PreviewModal
                 content={
                     replaceVariables(
                         editorContent[list.id],
@@ -95,19 +113,16 @@ export function EmailPanel(){
                         }, {})
                     )
                 }
-            /> */}
-            <PreviewModal
-                content={editorContent[list.id]}
             />
             <textarea className="w-full h-full outline-none p-2 text-xs font-mono font-light" onChange={(e) => setContent(e.currentTarget.value)} onBlur={() => handleChangeText()} onPaste={handlePaste} value={content}>
             </textarea>
             <div className={`flex gap-4 p-2 border-t-teal-500 border-t-2`}>
-                 <button className="btn btn-md btn-outline btn-accent rounded-md" onClick={handleOpenPopup}>Enviar para</button>
-                 <button className="btn btn-square btn-outline" onClick={handleCopyToClipboard}>
+                <button className="btn btn-md btn-outline btn-accent rounded-md" onClick={handleOpenPopup}>Enviar para</button>
+                <button className="btn btn-square btn-outline" onClick={handleCopyToClipboard}>
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <g clip-path="url(#clip0_670_392)">
-                        <path opacity="0.3" d="M14 7H8V21H19V12H14V7Z" fill="black" fill-opacity="0.54"/>
-                        <path d="M16 1H4C2.9 1 2 1.9 2 3V17H4V3H16V1ZM15 5H8C6.9 5 6.01 5.9 6.01 7L6 21C6 22.1 6.89 23 7.99 23H19C20.1 23 21 22.1 21 21V11L15 5ZM19 21H8V7H14V12H19V21Z" fill="black" fill-opacity="0.54"/>
+                        <g clipPath="url(#clip0_670_392)">
+                        <path opacity="0.3" d="M14 7H8V21H19V12H14V7Z" fill="black" fillOpacity="0.54"/>
+                        <path d="M16 1H4C2.9 1 2 1.9 2 3V17H4V3H16V1ZM15 5H8C6.9 5 6.01 5.9 6.01 7L6 21C6 22.1 6.89 23 7.99 23H19C20.1 23 21 22.1 21 21V11L15 5ZM19 21H8V7H14V12H19V21Z" fill="black" fillOpacity="0.54" />
                         </g>
                         <defs>
                         <clipPath id="clip0_670_392">
@@ -118,15 +133,20 @@ export function EmailPanel(){
                 </button>
                 <button className="btn btn-square btn-outline" onClick={handleSwitchView}>
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                        <g clip-path="url(#clip0_670_27)">
-                        <path opacity="0.3" d="M11.9997 6.5C8.20969 6.5 4.82969 8.63 3.17969 12C4.82969 15.37 8.19969 17.5 11.9997 17.5C15.7997 17.5 19.1697 15.37 20.8197 12C19.1697 8.63 15.7897 6.5 11.9997 6.5ZM11.9997 16.5C9.51969 16.5 7.49969 14.48 7.49969 12C7.49969 9.52 9.51969 7.5 11.9997 7.5C14.4797 7.5 16.4997 9.52 16.4997 12C16.4997 14.48 14.4797 16.5 11.9997 16.5Z" fill="black" fill-opacity="0.54"/>
-                        <path d="M12 4.5C7 4.5 2.73 7.61 1 12C2.73 16.39 7 19.5 12 19.5C17 19.5 21.27 16.39 23 12C21.27 7.61 17 4.5 12 4.5ZM12 17.5C8.21 17.5 4.83 15.37 3.18 12C4.83 8.63 8.21 6.5 12 6.5C15.79 6.5 19.17 8.63 20.82 12C19.17 15.37 15.79 17.5 12 17.5ZM12 7.5C9.52 7.5 7.5 9.52 7.5 12C7.5 14.48 9.52 16.5 12 16.5C14.48 16.5 16.5 14.48 16.5 12C16.5 9.52 14.48 7.5 12 7.5ZM12 14.5C10.62 14.5 9.5 13.38 9.5 12C9.5 10.62 10.62 9.5 12 9.5C13.38 9.5 14.5 10.62 14.5 12C14.5 13.38 13.38 14.5 12 14.5Z" fill="black" fill-opacity="0.54"/>
+                        <g clipPath="url(#clip0_670_27)">
+                        <path opacity="0.3" d="M11.9997 6.5C8.20969 6.5 4.82969 8.63 3.17969 12C4.82969 15.37 8.19969 17.5 11.9997 17.5C15.7997 17.5 19.1697 15.37 20.8197 12C19.1697 8.63 15.7897 6.5 11.9997 6.5ZM11.9997 16.5C9.51969 16.5 7.49969 14.48 7.49969 12C7.49969 9.52 9.51969 7.5 11.9997 7.5C14.4797 7.5 16.4997 9.52 16.4997 12C16.4997 14.48 14.4797 16.5 11.9997 16.5Z" fill="black" fillOpacity="0.54"/>
+                        <path d="M12 4.5C7 4.5 2.73 7.61 1 12C2.73 16.39 7 19.5 12 19.5C17 19.5 21.27 16.39 23 12C21.27 7.61 17 4.5 12 4.5ZM12 17.5C8.21 17.5 4.83 15.37 3.18 12C4.83 8.63 8.21 6.5 12 6.5C15.79 6.5 19.17 8.63 20.82 12C19.17 15.37 15.79 17.5 12 17.5ZM12 7.5C9.52 7.5 7.5 9.52 7.5 12C7.5 14.48 9.52 16.5 12 16.5C14.48 16.5 16.5 14.48 16.5 12C16.5 9.52 14.48 7.5 12 7.5ZM12 14.5C10.62 14.5 9.5 13.38 9.5 12C9.5 10.62 10.62 9.5 12 9.5C13.38 9.5 14.5 10.62 14.5 12C14.5 13.38 13.38 14.5 12 14.5Z" fill="black" fillOpacity="0.54"/>
                         </g>
                         <defs>
                         <clipPath id="clip0_670_27">
                         <rect width="24" height="24" fill="white"/>
                         </clipPath>
                         </defs>
+                    </svg>
+                </button>
+                <button className="btn btn-square btn-outline btn-error" onClick={handleDeleteList}>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="18" viewBox="0 0 14 18" fill="none">
+                        <path d="M1 16C1 17.1 1.9 18 3 18H11C12.1 18 13 17.1 13 16V4H1V16ZM3 6H11V16H3V6ZM10.5 1L9.5 0H4.5L3.5 1H0V3H14V1H10.5Z" fill="black" fillOpacity="0.54"/>
                     </svg>
                 </button>
             </div>
@@ -194,11 +214,17 @@ function Modal() {
                     subject: replaceVariables(subject, mappedVariables),
                     content: encodeURIComponent(replaceVariables(editorContent[list.id], mappedVariables))
                 })
-            }).then(data => {
-                data.json().then(d => console.log(d));
+            }).then(async(data) => {
+                const responseData: any = await data.json();
+
+                if (responseData?.error) {
+                    console.log(responseData);
+                    throw new Error(JSON.stringify(responseData.response));
+                }
+
                 setRequests(state => ({...state, [email]: {status: "ok"}}));
             }).catch(error => {
-                console.error(error);
+                console.log(error);
                 setRequests(state => ({...state, [email]: {status: "error"}}));
             });
         });
@@ -206,6 +232,40 @@ function Modal() {
         setProcessing(false);
         setProcessingEnd(true);
     };
+
+    const EmailItem = (email: {email: string, selected: boolean}, index: number) => {
+        let statusFlag = "";
+
+        if (requests[email.email]?.status === 'ok') statusFlag = "ok";
+        if (requests[email.email]?.status === 'error') statusFlag =  "error";
+        if (requests[email.email]?.status === 'pending') statusFlag =  "pending";
+
+        return (
+            <label className={`
+                flex gap-2 items-center p-2 border-l-4 border-y-2 border-y-neutral-200
+                ${statusFlag === 'ok' ? 'border-success' : ""}
+                ${statusFlag === 'error' ? 'border-error' : ""}
+                ${statusFlag === 'pending' ? 'border-gray-200' : ""}
+                ${processing ? "select-none bg-neutral-200" : ""}
+                
+            `} key={index}
+            >
+                <input
+                    type="checkbox"
+                    disabled={processing && !processingEnd}
+                    checked={email.selected}
+                    onChange={(e) => {
+                        const emailsClone = [...emails];
+                        //@ts-ignore
+                        emailsClone[index].selected = !emailsClone[index].selected;
+                        setEmails(emailsClone);
+                    }}
+                    className={`checkbox checkbox-sm`}
+                />
+                <span>{email.email}</span>
+            </label>
+        );
+    }
 
     useEffect(handleReset, [list.emails]);
 
@@ -237,40 +297,7 @@ function Modal() {
                         />
                     </div>
                     <div className="container h-min max-h-50">
-                        {emails.map((email, index) => {
-                            const checked = email.selected;
-                            let statusFlag = "";
-
-                            if (requests[email.email]?.status === 'ok') statusFlag = 'ok';
-                            if (requests[email.email]?.status === 'error') statusFlag = 'error';
-                            if (requests[email.email]?.status === 'pending') statusFlag = 'pending';
-                            
-                            return (
-                                <label className={`
-                                    flex gap-2 items-center p-2 border-l-4 border-y-2 border-y-neutral-200
-                                    ${statusFlag === 'ok' ? 'border-success' : ""}
-                                    ${statusFlag === 'error' ? 'border-error' : ""}
-                                    ${statusFlag === 'pending' ? 'border-gray-200' : ""}
-                                    ${processing ? "select-none bg-neutral-200" : ""}
-                                    
-                                `} key={index}
-                                >
-                                    <input
-                                        type="checkbox"
-                                        disabled={processing}
-                                        checked={checked}
-                                        onChange={(e) => {
-                                            const emailsClone = [...emails];
-                                            //@ts-ignore
-                                            emailsClone[index].selected = !emailsClone[index].selected;
-                                            setEmails(emailsClone);
-                                        }}
-                                        className={`checkbox checkbox-sm`}
-                                    />
-                                    <span>{email.email}</span>
-                                </label>
-                            );                         
-                        })}
+                        {emails.map(EmailItem)}
                     </div>
                 </div>
                 <div className="flex gap-4 my-2">
@@ -297,7 +324,7 @@ function PreviewModal({content}: {content: string}){
             <form method="dialog" className="modal-box rounded-md">
                 <ReactMarkdown
                     rehypePlugins={[rehypeRaw]}
-                    className="bg-neutral-50 w-full h-full max-w-md"
+                    className="w-full h-full max-w-md"
                 >
                     {content}
                 </ReactMarkdown>

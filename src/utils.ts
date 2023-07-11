@@ -14,7 +14,7 @@ export  function replaceVariables(content: string, variables: {[replacement: str
   }
   const RegExp: RegExp = /{{*.*}}/gm;
   while (RegExp.test(content)) {
-    content = content.replace(RegExp, `_${RegExp.source.toUpperCase()}_`);
+    content = content.replace(RegExp, `__`);
   }
   return content;
 }

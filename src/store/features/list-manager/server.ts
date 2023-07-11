@@ -1,3 +1,5 @@
+'use client'
+
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import type { RootState } from '../..';
 import { DEFAULT_LISTSET } from '@/constants';
@@ -25,16 +27,12 @@ export interface ListManagerState {
   lists: List[] 
 }
 
-if (!window.localStorage.getItem("listManager.lists")) {
-  window.localStorage.setItem("listManager.lists", JSON.stringify(DEFAULT_LISTSET));
-};
-
 const initialState: ListManagerState = {
-  lists: JSON.parse(window.localStorage.getItem("listManager.lists") || "[]")
+  lists: []
 };
 
-export const listManagerSlice = createSlice({
-  name: 'listManager',
+export const listManagerServerSlice = createSlice({
+  name: 'listManagerServer',
   initialState,
   reducers: {
     setList: (state, action: PayloadAction<List>) => {
@@ -60,7 +58,7 @@ export const listManagerSlice = createSlice({
 export const {
   setList,
   setLists
-} = listManagerSlice.actions;
+} = listManagerServerSlice.actions;
 
 export const selectLists = (state: RootState) => state.listManager.lists;
 export const selectList = (state: RootState) => {
@@ -69,4 +67,4 @@ export const selectList = (state: RootState) => {
   return list || null;
 };
 
-export default listManagerSlice.reducer;
+export default listManagerServerSlice.reducer;

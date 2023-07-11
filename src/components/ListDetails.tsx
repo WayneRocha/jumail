@@ -106,11 +106,23 @@ export function ListDetails() {
             variables: [
                 {
                     id: generateUUID(),
-                    prop: "Nome",
+                    prop: "nome",
                     value: ""
                 }
             ]
         });
+
+        dispatch(setList(newList));
+    };
+
+    const handleDeleteListEmail = (id: string) => {
+        if (list === null) { return; }
+
+        let newList: List = structuredClone(list);
+
+        const emailIndex = list.emails.findIndex(email => email.id === id);
+
+        newList.emails.splice(emailIndex, 1);
 
         dispatch(setList(newList));
     };
@@ -177,15 +189,22 @@ export function ListDetails() {
                     className="hidden"
                 />
                 <div className="collapse-title text-sm font-normal empty:border-b-2 empty:border-neutral-300" onClick={handleChange}>
-                    <input
-                        type="email"
-                        className="label-text rounded-sm bg-transparent"
-                        onChange={(e) => setAddressInput(e.currentTarget.value)}
-                        onBlur={() => handleChangeEmailAddress(id, addressInput)}
-                        onClick={(e) => e.stopPropagation()}
-                        placeholder="Novo Email"
-                        value={addressInput}
-                    />
+                    <div className="flex gap-4">
+                        <input
+                            type="email"
+                            className="label-text rounded-sm bg-transparent"
+                            onChange={(e) => setAddressInput(e.currentTarget.value)}
+                            onBlur={() => handleChangeEmailAddress(id, addressInput)}
+                            onClick={(e) => e.stopPropagation()}
+                            placeholder="Novo Email"
+                            value={addressInput}
+                        />
+                        <button className="btn btn-square btn-xs btn-outline" onClick={() => handleDeleteListEmail(id)}>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="8" height="12" viewBox="0 0 14 18" fill="none">
+                                <path d="M1 16C1 17.1 1.9 18 3 18H11C12.1 18 13 17.1 13 16V4H1V16ZM3 6H11V16H3V6ZM10.5 1L9.5 0H4.5L3.5 1H0V3H14V1H10.5Z" fill="black" fillOpacity="0.54"/>
+                            </svg>
+                        </button>
+                    </div>
                 </div>
                 
                 <div className="collapse-content">
@@ -220,7 +239,6 @@ export function ListDetails() {
     if (list === null) {
         return (
             <div className="bg-neutral-300 flex flex-col w-fit min-w-32 h-100 px-4 place-content-center justify-center">
-                <p className="text-sm font-bold text-neutral-600">Escolha uma lista</p>
             </div>
         );
     }
@@ -292,9 +310,11 @@ function VariableField({ id, prop, value, onPropChange, onValueChange, onDelete 
                         value={keyText}
                     />
                 </label>
-                    <button className="btn btn-square btn-xs btn-outline" onClick={() => onDelete(id)}>
-                        <svg id="Layer_1" className="h-2 w-2" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" fill="evenodd" stroke="currentColor" viewBox="0 0 105.16 122.88"><title>delete</title><path d="M11.17,37.16H94.65a8.4,8.4,0,0,1,2,.16,5.93,5.93,0,0,1,2.88,1.56,5.43,5.43,0,0,1,1.64,3.34,7.65,7.65,0,0,1-.06,1.44L94,117.31v0l0,.13,0,.28v0a7.06,7.06,0,0,1-.2.9v0l0,.06v0a5.89,5.89,0,0,1-5.47,4.07H17.32a6.17,6.17,0,0,1-1.25-.19,6.17,6.17,0,0,1-1.16-.48h0a6.18,6.18,0,0,1-3.08-4.88l-7-73.49a7.69,7.69,0,0,1-.06-1.66,5.37,5.37,0,0,1,1.63-3.29,6,6,0,0,1,3-1.58,8.94,8.94,0,0,1,1.79-.13ZM5.65,8.8H37.12V6h0a2.44,2.44,0,0,1,0-.27,6,6,0,0,1,1.76-4h0A6,6,0,0,1,43.09,0H62.46l.3,0a6,6,0,0,1,5.7,6V6h0V8.8h32l.39,0a4.7,4.7,0,0,1,4.31,4.43c0,.18,0,.32,0,.5v9.86a2.59,2.59,0,0,1-2.59,2.59H2.59A2.59,2.59,0,0,1,0,23.62V13.53H0a1.56,1.56,0,0,1,0-.31v0A4.72,4.72,0,0,1,3.88,8.88,10.4,10.4,0,0,1,5.65,8.8Zm42.1,52.7a4.77,4.77,0,0,1,9.49,0v37a4.77,4.77,0,0,1-9.49,0v-37Zm23.73-.2a4.58,4.58,0,0,1,5-4.06,4.47,4.47,0,0,1,4.51,4.46l-2,37a4.57,4.57,0,0,1-5,4.06,4.47,4.47,0,0,1-4.51-4.46l2-37ZM25,61.7a4.46,4.46,0,0,1,4.5-4.46,4.58,4.58,0,0,1,5,4.06l2,37a4.47,4.47,0,0,1-4.51,4.46,4.57,4.57,0,0,1-5-4.06l-2-37Z"/></svg>
-                    </button>
+                <button className="btn btn-square btn-xs btn-outline" onClick={() => onDelete(id)}>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="8" height="12" viewBox="0 0 14 18" fill="none">
+                        <path d="M1 16C1 17.1 1.9 18 3 18H11C12.1 18 13 17.1 13 16V4H1V16ZM3 6H11V16H3V6ZM10.5 1L9.5 0H4.5L3.5 1H0V3H14V1H10.5Z" fill="black" fillOpacity="0.54"/>
+                    </svg>
+                </button>
             </div>
             <input
                 type="text"

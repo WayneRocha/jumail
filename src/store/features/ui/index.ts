@@ -1,6 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import type { RootState } from '../..';
+import { DEFAULT_EDITORCONTENT } from '@/constants';
 
 export interface UIState {
   userName: string | null,
@@ -10,21 +11,40 @@ export interface UIState {
   editorContent: {[listId: string]: string}
 }
 
-const initialState: UIState = {
-  userName: window.localStorage.getItem("ui.user_name") || null,
-  userEmail: window.localStorage.getItem("ui.user_email") || null,
-  activeList: window.localStorage.getItem("ui.activeList") || null,
-  activeEmailCard: window.localStorage.getItem("ui.emailCardActive") || null,
-  editorContent: JSON.parse(window.localStorage.getItem("ui.editorContent") || "{}")
+const getServerSideInitialState = (): UIState => ({
+  userName: null,
+  userEmail: null,
+  activeList: null,
+  activeEmailCard: null,
+  editorContent: {},
+});
+
+const getClientSideInitialState = (): UIState => {
+  const editorContent = window.localStorage.getItem("ui.editorContent");
+
+  return {
+    userName: window.localStorage.getItem("ui.user_name") || null,
+    userEmail: window.localStorage.getItem("ui.user_email") || null,
+    activeList: window.localStorage.getItem("ui.activeList") || null,
+    activeEmailCard: window.localStorage.getItem("ui.emailCardActive") || null,
+    editorContent: editorContent ? JSON.parse(editorContent) : DEFAULT_EDITORCONTENT
+  };
 };
+
+const initialState: UIState = typeof window !== "undefined" ? getClientSideInitialState() : getServerSideInitialState();
 
 export const uiSlice = createSlice({
   name: 'ui',
   initialState,
   reducers: {
-    setActiveList: (state, action: PayloadAction<string>) => {
+    setActiveList: (state, action: PayloadAction<string | null>) => {
       state.activeList = action.payload;
-      window.localStorage.setItem("ui.activeList", action.payload);
+
+      if (action.payload !== null) {
+        window.localStorage.setItem("ui.activeList", action.payload);
+      } else {
+        window.localStorage.removeItem("ui.activeList");
+      }
     },
     setActiveEmailCard: (state, action: PayloadAction<string | null>) => {
       state.activeEmailCard = action.payload;
