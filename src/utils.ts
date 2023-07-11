@@ -8,7 +8,10 @@ export function generateUUID() {
   });
 }
 
-export  function replaceVariables(content: string, variables: {[replacement: string]: Serializable}): string {
+export function replaceVariables(content: string, variables: {[replacement: string]: Serializable}): string {
+  if (!content) {
+    content = "";
+  }
   for (const param of Object.entries(variables)) {
     content = content.replace(`{{${param[0]}}}`, param[1].toString());
   }

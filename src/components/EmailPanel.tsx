@@ -106,7 +106,7 @@ export function EmailPanel(){
             <PreviewModal
                 content={
                     replaceVariables(
-                        editorContent[list.id],
+                        editorContent[list.id] || "",
                         list.variables.reduce((obj: {[key: string]: string}, variable) => {
                             obj[variable.prop] = variable.value;
                             return obj;
